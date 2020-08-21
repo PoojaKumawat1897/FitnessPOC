@@ -1,9 +1,10 @@
+import { Subscription } from 'rxjs';
 import { Injectable } from '@angular/core';
-//import 'rxjs/add/operator/map';
 import { Subject } from 'rxjs/Subject';
 import { Exercises } from './exercise.model';
 import { map } from 'rxjs/operators';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { UIService } from '../shared/ui.service';
 
 @Injectable()
 export class TrainingService{
@@ -13,11 +14,13 @@ export class TrainingService{
   finishedExercisesChanged = new Subject<Exercises[]>();
   private  availableExercises: Exercises[] = [];
   private runningExercise: Exercises;
+  private fbSubs: Subscription[] = [];
 
-  constructor(private db: AngularFirestore) { }
+  constructor(private db: AngularFirestore,
+              private uiService: UIService) { }
 
   fetchAvailableExercises(){
-    this.db
+    this.fbSubs.push(this.db
     .collection('availableExercises')
     .snapshotChanges()
     .pipe(map(docArray => {
@@ -30,10 +33,15 @@ export class TrainingService{
         };
       });
     }))
-    .subscribe((exercises : Exercises[]) =>{
+    .subscribe((exercises : Exercises[]) => {
+      this.uiService.loadingStateChanged.next(false);
       this.availableExercises = exercises;
       this.exercisesChanged.next([...this.availableExercises]);
-    });
+    }, error => {
+      this.uiService.loadingStateChanged.next(false);
+      this.uiService.showSnackbar('Fetching Exercises failed, please try again later', null, 3000);
+      this.exercisesChanged.next(null);
+    }));
   }
 
   startExercise(selectedId: string){
@@ -71,10 +79,15 @@ export class TrainingService{
   }
 
   fetchCompletedOrCancelledExercises(){
-    this.db.collection('finishedExercises').valueChanges()
+    this.fbSubs.push(this.db
+    .collection('finishedExercises').valueChanges()
     .subscribe((exercises : Exercises[]) => {
       this.finishedExercisesChanged.next(exercises);
-    });
+    }));
+  }
+
+  cancelSubscriptions() {
+    this.fbSubs.forEach(sub => sub.unsubscribe());
   }
 
   private addDataToDatabase(exercise: Exercises){

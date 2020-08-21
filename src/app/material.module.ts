@@ -18,7 +18,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import {MatSortModule} from '@angular/material/sort';
 import {MatPaginatorModule} from '@angular/material/paginator';
-import {MatRadioModule} from '@angular/material/radio';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [],
@@ -27,15 +27,14 @@ import {MatRadioModule} from '@angular/material/radio';
     ,MatCheckboxModule, MatSidenavModule, MatToolbarModule,
     MatListModule, MatTabsModule, MatCardModule, MatSelectModule,
     MatProgressSpinnerModule, MatDialogModule, MatTableModule,
-    MatSortModule, MatPaginatorModule, MatRadioModule
-    //CommonModule
+    MatSortModule, MatPaginatorModule, MatSnackBarModule
   ],
   exports: [MatButtonModule, MatIconModule, MatInputModule,
     MatFormFieldModule, MatDatepickerModule, MatNativeDateModule,
     MatCheckboxModule, MatSidenavModule, MatToolbarModule,
     MatListModule, MatTabsModule, MatCardModule, MatSelectModule,
     MatProgressSpinnerModule, MatDialogModule, MatTableModule,
-    MatSortModule, MatPaginatorModule, MatRadioModule
+    MatSortModule, MatPaginatorModule, MatSnackBarModule
   ]
 })
 export class MaterialModule { }
